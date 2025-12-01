@@ -1,4 +1,4 @@
-name: Build & Push to GHCR
+name: Build & Deploy FastAPI app
 
 on:
   push:
@@ -9,12 +9,12 @@ env:
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/test_app
 
 jobs:
-  build-and-push:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     permissions:
       contents: read
-      packages: write   # needed to push to GHCR
+      packages: write   # needed for GHCR
 
     steps:
       - name: Checkout repository
@@ -43,3 +43,14 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          # port: 22   # uncomment & change if your SSH port is not 22
+          script: |
+            cd /srv/apps/myapp
+            ./deploy.sh
