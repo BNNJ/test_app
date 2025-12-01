@@ -50,7 +50,6 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          # port: 22   # uncomment & change if your SSH port is not 22
           script: |
             cd /srv/apps/myapp
             ./deploy.sh
